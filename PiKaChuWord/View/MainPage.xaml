@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<TabbedPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:android="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.AndroidSpecific;assembly=Microsoft.Maui.Controls"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:converters="clr-namespace:ValueConverters;assembly=ValueConverters"
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
+             x:Class="PiKaChuWord.View.MainPage"
+             android:TabbedPage.ToolbarPlacement="Bottom"
+             NavigationPage.HasBackButton="False">
+
+    <NavigationPage.TitleView>
+        <StackLayout>
+            <Label Text="皮卡丘的单词本" VerticalOptions="CenterAndExpand" TextColor="White" HorizontalTextAlignment="Center" FontSize="22" FontAttributes="Bold"/>
+        </StackLayout>
+    </NavigationPage.TitleView>
+
+    <ContentPage Title="列表" 
+                 IconImageSource="list.png"
+                 BindingContext="{Binding ListPageViewModel, Source={StaticResource ServiceLocator}}">
+
+        <RefreshView IsRefreshing="{Binding IsRefreshing}" Command="{Binding RefreshCommand}">
+            <ListView ItemsSource="{Binding WordList}" SelectionMode="None">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <TextCell Text="{Binding Vocabulary}" Detail="{Binding Translation}"/>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </RefreshView>
+    </ContentPage>
+
+    <ContentPage Title="记忆" 
+                 IconImageSource="edit_note.png"
+                 BindingContext="{Binding MemoryPageViewModel, Source={StaticResource ServiceLocator}}">
+        <ContentPage.Resources>
+            <ResourceDictionary>
+                <converters:BoolInverter x:Key="BoolInverter"/>
+            </ResourceDictionary>
+        </ContentPage.Resources>
+
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition />
+                <RowDefinition />
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+
+
+            <Picker Grid.Column="0" Grid.Row="0" 
+                    ItemsSource="{Binding FilterModes}"
+                    HorizontalTextAlignment="Center"
+                    HorizontalOptions="CenterAndExpand"
+                    SelectedItem="{Binding FilterMode}">
+                <Picker.Behaviors>
+                    <toolkit:EventToCommandBehavior EventName="SelectedIndexChanged" Command="{Binding FilterCommand}"/>
+                </Picker.Behaviors>
+            </Picker>
+            <DatePicker Grid.Column="1" Grid.Row="0" 
+                        HorizontalOptions="End" 
+                        Date="{Binding EarlyDate}"
+                        Format="yyyy-MM-dd">
+                <DatePicker.Behaviors>
+                    <toolkit:EventToCommandBehavior EventName="DateSelected" Command="{Binding ChangeDateCommand}"/>
+                </DatePicker.Behaviors>
+            </DatePicker>
+            <Label Text="—" 
+                    Padding="10, 0" 
+                    Grid.Column="2" Grid.Row="0" 
+                    HorizontalOptions="Center" 
+                    VerticalOptions="Center"/>
+            <DatePicker Grid.Column="3" Grid.Row="0" 
+                        HorizontalOptions="Start"  
+                        Date="{Binding LateDate}"
+                        Format="yyyy-MM-dd">
+                <DatePicker.Behaviors>
+                    <toolkit:EventToCommandBehavior EventName="DateSelected" Command="{Binding ChangeDateCommand}"/>
+                </DatePicker.Behaviors>
+            </DatePicker>
+
+            <ImageButton Source="refresh.png" Grid.Column="4" Grid.Row="0" 
+                         WidthRequest="20" 
+                         Command="{Binding LoadCommand}"/>
+
+            <Label Text="{Binding Vocabulary}" 
+                    FontSize="42" Grid.Row="1" 
+                    Grid.Column="0" Grid.ColumnSpan="5" 
+                    HorizontalOptions="Center" VerticalOptions="End" 
+                    Margin="20" 
+                    HorizontalTextAlignment="Center">
+                <Label.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding ShowAnsCommand}"/>
+                </Label.GestureRecognizers>
+            </Label>
+            <Label Text="{Binding Translation}" 
+                    FontSize="18" 
+                    TextColor="Gray" 
+                    Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="5" 
+                    HorizontalOptions="Center"  VerticalOptions="Start" 
+                    Margin="20" 
+                    IsVisible="{Binding AnsHidden, Converter={StaticResource BoolInverter}}" 
+                    HorizontalTextAlignment="Center">
+                <Label.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding ShowAnsCommand}"/>
+                </Label.GestureRecognizers>
+            </Label>
+
+            <Button Text="←" 
+                    BackgroundColor="White" 
+                    TextColor="#512BD4" 
+                    FontSize="32" 
+                    Grid.Row="3" Grid.Column="0" 
+                    HorizontalOptions="Center" VerticalOptions="End"
+                    Command="{Binding NextCommand}">
+                <Button.CommandParameter>
+                    <sys:Int32>-1</sys:Int32>
+                </Button.CommandParameter>
+            </Button>
+            <Label Text="{Binding Index}" 
+                    WidthRequest="100"
+                    HorizontalTextAlignment="End"
+                    Padding="0, 18" 
+                    FontSize="18" 
+                    TextColor="#512BD4" 
+                    Grid.Row="3" Grid.Column="1" 
+                    HorizontalOptions="End" VerticalOptions="End"/>
+            <Label Text=" / "
+                    Padding="0, 18" 
+                    FontSize="18" 
+                    TextColor="#512BD4" 
+                    Grid.Row="3" Grid.Column="2" 
+                    HorizontalOptions="Center" VerticalOptions="End"/>
+            <Label Text="{Binding Count}" 
+                    WidthRequest="100"
+                    Padding="0, 18" 
+                    FontSize="18" 
+                    TextColor="#512BD4" 
+                    Grid.Row="3" Grid.Column="3" 
+                    HorizontalOptions="Start" VerticalOptions="End"/>
+            <Button Text="→" 
+                    BackgroundColor="White" 
+                    TextColor="#512BD4" 
+                    FontSize="32" 
+                    Grid.Row="3" Grid.Column="4" 
+                    HorizontalOptions="Center" VerticalOptions="End" 
+                    Command="{Binding NextCommand}">
+                <Button.CommandParameter>
+                    <sys:Int32>1</sys:Int32>
+                </Button.CommandParameter>
+            </Button>
+        </Grid>
+
+    </ContentPage>
+
+    <ContentPage Title="添加" 
+                 IconImageSource="add_circle.png"
+                 BindingContext="{Binding AddPageViewModel, Source={StaticResource ServiceLocator}}">
+
+        <ContentPage.Resources>
+            <ResourceDictionary>
+                <ResourceDictionary x:Key="StringToColorDict">
+                    <Color x:Key="√">Green</Color>
+                    <Color x:Key="×">Red</Color>
+                    <Color x:Key="?">Black</Color>
+                </ResourceDictionary>
+                <converters:StringToObjectConverter x:Key="StringToColorConverter" Items="{StaticResource StringToColorDict}"/>
+            </ResourceDictionary>
+        </ContentPage.Resources>
+
+        <VerticalStackLayout Padding="25, 10" Spacing="20">
+            <Entry x:Name="VocabularyEntry" 
+                   Placeholder="词汇" 
+                   TextColor="{Binding IsWord, Converter={StaticResource StringToColorConverter}}" 
+                   Text="{Binding Vocabulary}" 
+                   ReturnType="Next" 
+                   toolkit:SetFocusOnEntryCompletedBehavior.NextElement="{x:Reference TranslationEntry}">
+                <Entry.Behaviors>
+                    <toolkit:EventToCommandBehavior EventName="Focused" Command="{Binding VocabularyEntryFocusedCommand}"/>
+                </Entry.Behaviors>
+            </Entry>
+            <Entry x:Name="TranslationEntry" 
+                   Placeholder="翻译" 
+                   Text="{Binding Translation}"
+                   ReturnType="Next"
+                   ReturnCommand="{Binding AddCommand}"
+                   toolkit:SetFocusOnEntryCompletedBehavior.NextElement="{x:Reference VocabularyEntry}">
+                <Entry.Behaviors>
+                    <toolkit:EventToCommandBehavior EventName="Focused" Command="{Binding QueryCommand}"/>
+                </Entry.Behaviors>
+            </Entry>
+            <Entry Placeholder="日期" 
+                   Text="{Binding Date}"
+                   Keyboard="Numeric"/>
+            <Button Text="添加" 
+                    Margin="0, 5" 
+                    Command="{Binding AddCommand}"
+                    Clicked="Button_Clicked"/>
+        </VerticalStackLayout>
+    </ContentPage>
+</TabbedPage>
