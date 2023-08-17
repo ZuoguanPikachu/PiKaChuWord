@@ -160,6 +160,12 @@
 
     </ContentPage>
 
+    <ContentPage Title="导出" 
+                 IconImageSource="export.png"
+                 BindingContext="{Binding ExportPageViewModel, Source={StaticResource ServiceLocator}}">
+        <Button Text="复制到剪贴板" Command="{Binding ExportToClipBoardCommand}" WidthRequest="200" HeightRequest="50"/>
+    </ContentPage>
+
     <ContentPage Title="添加" 
                  IconImageSource="add_circle.png"
                  BindingContext="{Binding AddPageViewModel, Source={StaticResource ServiceLocator}}">
@@ -205,4 +211,5 @@
                     Clicked="Button_Clicked"/>
         </VerticalStackLayout>
     </ContentPage>
+
 </TabbedPage>

@@ -76,7 +76,7 @@ namespace PiKaChuWord.Utils
             }
 
             JToken result = Translate(query);
-
+            
             string translation = "";
             if (GetJTokenKeys(result).Contains("kaoyan")) 
             {
@@ -92,7 +92,7 @@ namespace PiKaChuWord.Utils
                         break;
                     }
                 }
-                translation.TrimEnd('，');
+                translation = translation[..^1];
             }
             else
             {

@@ -8,6 +8,7 @@ namespace PiKaChuWord.Service
         public AddPageViewModel AddPageViewModel => _serviceProvider.GetService<AddPageViewModel>();
         public ListPageViewModel ListPageViewModel => _serviceProvider.GetService<ListPageViewModel>();
         public MemoryPageViewModel MemoryPageViewModel => _serviceProvider.GetService<MemoryPageViewModel>();
+        public ExportPageViewModel ExportPageViewModel => _serviceProvider.GetService<ExportPageViewModel>();
         public DataBaseService DataBaseService => _serviceProvider.GetService<DataBaseService>();
 
         public ServiceLocator()
@@ -16,6 +17,7 @@ namespace PiKaChuWord.Service
             serviceCollection.AddSingleton<AddPageViewModel>();
             serviceCollection.AddSingleton<ListPageViewModel>();
             serviceCollection.AddSingleton<MemoryPageViewModel>();
+            serviceCollection.AddSingleton<ExportPageViewModel>();
             serviceCollection.AddSingleton<DataBaseService>();
 
             _serviceProvider = serviceCollection.BuildServiceProvider();
