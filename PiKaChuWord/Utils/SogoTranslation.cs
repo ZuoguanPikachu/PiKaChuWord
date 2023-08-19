@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json.Linq;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -78,21 +79,11 @@ namespace PiKaChuWord.Utils
             JToken result = Translate(query);
             
             string translation = "";
-            if (GetJTokenKeys(result).Contains("kaoyan")) 
+            if ((result as JObject).Properties().Any(item => item.Name == "kaoyan"))
             {
-                int i = 0;
-                foreach (JToken item in result["kaoyan"]["exam_freq_info"])
-                {
-                    translation += item["chinese"].Value<string>().Replace("; ", "，");
-                    translation += "，";
-
-                    i += 1;
-                    if (i == 5)
-                    {
-                        break;
-                    }
-                }
-                translation = translation[..^1];
+                translation = string.Join("，", result["kaoyan"]["exam_freq_info"].Take(5).Select(
+                    item => item["chinese"].Value<string>().Replace("; ", "，")
+                ));
             }
             else
             {
@@ -107,7 +98,7 @@ namespace PiKaChuWord.Utils
                     if(word.Length >= 2)
                     {
                         result = Translate(word);
-                        if (GetJTokenKeys(result["translate"]).Contains("diff_text"))
+                        if ((result["translate"] as JObject).Properties().Any(item => item.Name == "diff_text"))
                         {
                             isWord = "×";
                             break;
@@ -117,25 +108,13 @@ namespace PiKaChuWord.Utils
             }
             else
             {
-                if (GetJTokenKeys(result["translate"]).Contains("diff_text"))
+                if ((result["translate"] as JObject).Properties().Any(item => item.Name == "diff_text"))
                 {
                     isWord = "×";
                 }
             }
 
             return new (){{"is_word", isWord}, {"translation", translation}};
-        }
-
-        private List<string> GetJTokenKeys(JToken jToken)
-        {
-            List<string> keys = new List<string>();
-            JObject jObject = (JObject)jToken;
-            foreach (var property in jObject.Properties())
-            {
-                keys.Add(property.Name);
-            }
-
-            return keys;
         }
     }
 }

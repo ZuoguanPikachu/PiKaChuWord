@@ -36,7 +36,7 @@ namespace PiKaChuWord.ViewModel
         List<string> filterModes = new (){"全部", "近1周", "近2周", "近1月"};
 
         [ObservableProperty]
-        string filterMode = "全部";
+        string filterMode;
 
         [RelayCommand]
         void Filter()
@@ -72,6 +72,7 @@ namespace PiKaChuWord.ViewModel
         async void Load()
         {
             words = await dataBaseService.GetList();
+            FilterMode = "全部";
             if (words.Count == 0) return;
 
             words = words.OrderByDescending(item => item.Date).ToList();
@@ -115,17 +116,13 @@ namespace PiKaChuWord.ViewModel
         void ChangeDate()
         {
             if (words.Count == 0) return;
-            List<Word> quizWords = new List<Word>();
-            foreach (Word item in words)
-            {
-                if (item.Date >= Convert.ToInt32(EarlyDate.ToString("yyyyMMdd")) && item.Date <= Convert.ToInt32(LateDate.ToString("yyyyMMdd")))
-                {
-                    quizWords.Add(item);
-                }
-            }
 
-            if (words.Count == 0) return;
-            LoadQuizWords(quizWords);
+            List<Word> selectedWords = words.Where(
+                item => item.Date >= Convert.ToInt32(EarlyDate.ToString("yyyyMMdd")) && item.Date <= Convert.ToInt32(LateDate.ToString("yyyyMMdd"))
+            ).ToList();
+
+            if (selectedWords.Count == 0) return;
+            LoadQuizWords(selectedWords);
         }
 
         void LoadQuizWords(List<Word> quizWords)
