@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<toolkit:Popup xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             BindingContext="{Binding WordPopupViewModel, Source={StaticResource ServiceLocator}}"
+             x:Class="PiKaChuWord.View.WordPopup">
+    <VerticalStackLayout Spacing="25" Padding="30, 30, 30, 20">
+        <VerticalStackLayout>
+            <Label Text="词汇："/>
+            <Entry Text="{Binding Word.Vocabulary}" Placeholder="词汇" WidthRequest="300"/>
+        </VerticalStackLayout>
+
+        <VerticalStackLayout>
+            <Label Text="翻译："/>
+            <Entry Text="{Binding Word.Translation}" Placeholder="翻译" WidthRequest="300"/>
+        </VerticalStackLayout>
+
+        <HorizontalStackLayout Margin="0, 15, 0, 0">
+            <Button Text="DELETE" HeightRequest="30" FontSize="10" Padding="15, 0" Command="{Binding DeleteCommand}"/>
+            <Button Text="CANCEL" HeightRequest="30" FontSize="10" Margin="120, 0, 5, 0" Padding="15, 0" Command="{Binding CancelCommand}"/>
+            <Button Text="OK" HeightRequest="30" FontSize="10" Margin="5, 0, 0, 0" Padding="15, 0" Command="{Binding UpdateCommand}"/>
+        </HorizontalStackLayout>
+
+    </VerticalStackLayout>
+</toolkit:Popup>

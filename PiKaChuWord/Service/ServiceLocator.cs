@@ -9,7 +9,11 @@ namespace PiKaChuWord.Service
         public ListPageViewModel ListPageViewModel => _serviceProvider.GetService<ListPageViewModel>();
         public MemoryPageViewModel MemoryPageViewModel => _serviceProvider.GetService<MemoryPageViewModel>();
         public ExportPageViewModel ExportPageViewModel => _serviceProvider.GetService<ExportPageViewModel>();
+        public WordPopupViewModel WordPopupViewModel => _serviceProvider.GetService<WordPopupViewModel>();
+
         public DataBaseService DataBaseService => _serviceProvider.GetService<DataBaseService>();
+        public PopupService PopupService => _serviceProvider.GetService<PopupService>();
+
 
         public ServiceLocator()
         {
@@ -18,7 +22,10 @@ namespace PiKaChuWord.Service
             serviceCollection.AddSingleton<ListPageViewModel>();
             serviceCollection.AddSingleton<MemoryPageViewModel>();
             serviceCollection.AddSingleton<ExportPageViewModel>();
+            serviceCollection.AddSingleton<WordPopupViewModel>();
+
             serviceCollection.AddSingleton<DataBaseService>();
+            serviceCollection.AddSingleton<PopupService>();
 
             _serviceProvider = serviceCollection.BuildServiceProvider();
         }

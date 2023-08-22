@@ -36,6 +36,11 @@ namespace PiKaChuWord.Service
             await dataBase.InsertOrReplaceAsync(newWord);
         }
 
+        public async Task DeleteWord(Word word)
+        {
+            await dataBase.DeleteAsync(word);
+        }
+
         public async Task<Dictionary<string, string>> QueryWord(string query)
         {
             List<Word> words_list = await GetList();

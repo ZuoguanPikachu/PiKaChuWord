@@ -18,6 +18,11 @@
     <ContentPage Title="列表" 
                  IconImageSource="list.png"
                  BindingContext="{Binding ListPageViewModel, Source={StaticResource ServiceLocator}}">
+        <ContentPage.Resources>
+            <ResourceDictionary>
+                <toolkit:ItemTappedEventArgsConverter x:Key="ItemTappedEventArgsConverter"/>
+            </ResourceDictionary>
+        </ContentPage.Resources>
 
         <RefreshView IsRefreshing="{Binding IsRefreshing}" Command="{Binding RefreshCommand}">
             <ListView ItemsSource="{Binding WordList}" SelectionMode="None">
@@ -26,6 +31,11 @@
                         <TextCell Text="{Binding Vocabulary}" Detail="{Binding Translation}"/>
                     </DataTemplate>
                 </ListView.ItemTemplate>
+
+                <ListView.Behaviors>
+                    <toolkit:EventToCommandBehavior EventName="ItemTapped" Command="{Binding PopupCommand}" EventArgsConverter="{StaticResource ItemTappedEventArgsConverter}"/>
+                </ListView.Behaviors>
+                
             </ListView>
         </RefreshView>
     </ContentPage>
@@ -166,7 +176,7 @@
         <Button Text="复制到剪贴板" Command="{Binding ExportToClipBoardCommand}" WidthRequest="200" HeightRequest="50"/>
     </ContentPage>
 
-    <ContentPage Title="添加" 
+    <ContentPage Title="添加"
                  IconImageSource="add_circle.png"
                  BindingContext="{Binding AddPageViewModel, Source={StaticResource ServiceLocator}}">
 
