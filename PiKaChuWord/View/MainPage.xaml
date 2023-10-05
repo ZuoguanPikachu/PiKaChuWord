@@ -24,20 +24,29 @@
             </ResourceDictionary>
         </ContentPage.Resources>
 
-        <RefreshView IsRefreshing="{Binding IsRefreshing}" Command="{Binding RefreshCommand}">
-            <ListView ItemsSource="{Binding WordList}" SelectionMode="None">
-                <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <TextCell Text="{Binding Vocabulary}" Detail="{Binding Translation}"/>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
+        <StackLayout>
+            <SearchBar HorizontalOptions="CenterAndExpand" Margin="0, -2" Text="{Binding Query}">
+                <SearchBar.Behaviors>
+                    <toolkit:EventToCommandBehavior EventName="PropertyChanged" Command="{Binding SearchCommand}"/>
+                </SearchBar.Behaviors>
+            </SearchBar>
+            <Border />
+            <RefreshView IsRefreshing="{Binding IsRefreshing}" Command="{Binding RefreshCommand}">
+                <ListView ItemsSource="{Binding WordList}" SelectionMode="None">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <TextCell Text="{Binding Vocabulary}" Detail="{Binding Translation}"/>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
 
-                <ListView.Behaviors>
-                    <toolkit:EventToCommandBehavior EventName="ItemTapped" Command="{Binding PopupCommand}" EventArgsConverter="{StaticResource ItemTappedEventArgsConverter}"/>
-                </ListView.Behaviors>
-                
-            </ListView>
-        </RefreshView>
+                    <ListView.Behaviors>
+                        <toolkit:EventToCommandBehavior EventName="ItemTapped" Command="{Binding PopupCommand}" EventArgsConverter="{StaticResource ItemTappedEventArgsConverter}"/>
+                    </ListView.Behaviors>
+
+                </ListView>
+            </RefreshView>
+        </StackLayout>
+
     </ContentPage>
 
     <ContentPage Title="记忆" 

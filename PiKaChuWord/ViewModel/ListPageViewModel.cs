@@ -6,8 +6,7 @@ using CommunityToolkit.Mvvm.Messaging.Messages;
 using PiKaChuWord.Model;
 using PiKaChuWord.Service;
 using System.Collections.ObjectModel;
-using static Microsoft.Maui.ApplicationModel.Permissions;
-using System.Xml.Linq;
+
 
 namespace PiKaChuWord.ViewModel
 {
@@ -15,6 +14,7 @@ namespace PiKaChuWord.ViewModel
     {
         private DataBaseService dataBaseService;
         private PopupService popupService;
+        private List<Word> words;
 
         [ObservableProperty]
         ObservableCollection<Word> wordList = new();
@@ -22,10 +22,14 @@ namespace PiKaChuWord.ViewModel
         [ObservableProperty]
         bool isRefreshing = false;
 
+        [ObservableProperty]
+        string query = "";
+
         [RelayCommand]
         void Refresh()
         {
-            Load();
+            Query = "";
+            Task.Run(Load);
             IsRefreshing = false;
         }
 
@@ -36,17 +40,43 @@ namespace PiKaChuWord.ViewModel
             WeakReferenceMessenger.Default.Send(new ValueChangedMessage<Word>(word));
         }
 
-        async void Load()
+        [RelayCommand]
+        void Search()
         {
-            List<Word> words = await dataBaseService.GetList();
-            WordList = words.OrderByDescending(item => item.Date).ToObservableCollection();
+            if(words != null)
+            {
+                if (Query == "")
+                {
+                    if(words.Count != WordList.Count)
+                    {
+                        WordList = words.OrderByDescending(item => item.Date).ToObservableCollection();
+                    }
+                }
+                else
+                {
+                    WordList = words
+                        .Where(item => item.Vocabulary.Contains(Query) || item.Translation.Contains(Query))
+                        .OrderByDescending(item => item.Date)
+                        .ToObservableCollection();
+                }
+            }
         }
 
-        public void Receive(ValueChangedMessage<bool> isChanged)
+        async Task Load()
+        {
+            words = await dataBaseService.GetList();
+            if (Query == "")
+            {
+                WordList = words.OrderByDescending(item => item.Date).ToObservableCollection();
+            }
+        }
+
+        public async void Receive(ValueChangedMessage<bool> isChanged)
         {
             if (isChanged.Value)
             {
-                Load();
+                await Load();
+                Search();
             }
         }
 
@@ -55,7 +85,7 @@ namespace PiKaChuWord.ViewModel
             IsActive = true;
             this.dataBaseService = dataBaseService;
             this.popupService = popupService;
-            Load();
+            Task.Run(Load);
         }
     }
 }
