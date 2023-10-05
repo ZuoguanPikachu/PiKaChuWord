@@ -69,7 +69,7 @@ namespace PiKaChuWord.ViewModel
 
 
         [RelayCommand]
-        async void Load()
+        async Task Load()
         {
             words = await dataBaseService.GetList();
             FilterMode = "全部";
@@ -158,7 +158,7 @@ namespace PiKaChuWord.ViewModel
         public MemoryPageViewModel(DataBaseService dataBaseService)
         {
             this.dataBaseService = dataBaseService;
-            Load();
+            Task.Run(Load);
         }
     }
 }

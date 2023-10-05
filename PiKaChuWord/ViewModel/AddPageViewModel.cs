@@ -1,5 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging.Messages;
+using CommunityToolkit.Mvvm.Messaging;
 using PiKaChuWord.Service;
 
 namespace PiKaChuWord.ViewModel
@@ -7,6 +9,7 @@ namespace PiKaChuWord.ViewModel
     internal partial class AddPageViewModel : ObservableObject
     {
         private DataBaseService dataBaseService;
+        private WordQueryService wordQueryService;
 
         [ObservableProperty]
         string vocabulary;
@@ -21,15 +24,15 @@ namespace PiKaChuWord.ViewModel
         Color textcolor = Colors.Black;
 
         [ObservableProperty]
-        string isWord = "?";
+        string wordStatus = "-";
 
         [RelayCommand]
         void Query()
         {
             Task.Run(() => {
                 Translation = "";
-                Dictionary<string, string> result = dataBaseService.QueryWord(Vocabulary).Result;
-                IsWord = result["is_word"];
+                Dictionary<string, string> result = wordQueryService.QueryWord(Vocabulary).Result;
+                WordStatus = result["word_status"];
                 Translation = result["translation"];
             });
         }
@@ -38,6 +41,7 @@ namespace PiKaChuWord.ViewModel
         async Task AddAsync()
         {
             await dataBaseService.AddWord(new() { Vocabulary = Vocabulary, Translation = Translation, Date = Convert.ToInt32(Date) });
+            WeakReferenceMessenger.Default.Send(new ValueChangedMessage<bool>(true));
             Vocabulary = "";
             Translation = "";
         }
@@ -45,12 +49,13 @@ namespace PiKaChuWord.ViewModel
         [RelayCommand]
         void VocabularyEntryFocused()
         {
-            IsWord = "?";
+            WordStatus = "-";
         }
 
-        public AddPageViewModel(DataBaseService dataBaseService)
+        public AddPageViewModel(DataBaseService dataBaseService, WordQueryService wordQueryService)
         {
             this.dataBaseService = dataBaseService;
+            this.wordQueryService = wordQueryService;
         }
     }
 }

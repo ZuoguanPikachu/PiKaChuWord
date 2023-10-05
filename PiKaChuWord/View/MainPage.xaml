@@ -31,20 +31,17 @@
                 </SearchBar.Behaviors>
             </SearchBar>
             <Border />
-            <RefreshView IsRefreshing="{Binding IsRefreshing}" Command="{Binding RefreshCommand}">
-                <ListView ItemsSource="{Binding WordList}" SelectionMode="None">
-                    <ListView.ItemTemplate>
-                        <DataTemplate>
-                            <TextCell Text="{Binding Vocabulary}" Detail="{Binding Translation}"/>
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
+            <ListView ItemsSource="{Binding WordList}" SelectionMode="None">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <TextCell Text="{Binding Vocabulary}" Detail="{Binding Translation}"/>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
 
-                    <ListView.Behaviors>
-                        <toolkit:EventToCommandBehavior EventName="ItemTapped" Command="{Binding PopupCommand}" EventArgsConverter="{StaticResource ItemTappedEventArgsConverter}"/>
-                    </ListView.Behaviors>
-
-                </ListView>
-            </RefreshView>
+                <ListView.Behaviors>
+                    <toolkit:EventToCommandBehavior EventName="ItemTapped" Command="{Binding PopupCommand}" EventArgsConverter="{StaticResource ItemTappedEventArgsConverter}"/>
+                </ListView.Behaviors>
+            </ListView>
         </StackLayout>
 
     </ContentPage>
@@ -194,7 +191,8 @@
                 <ResourceDictionary x:Key="StringToColorDict">
                     <Color x:Key="√">Green</Color>
                     <Color x:Key="×">Red</Color>
-                    <Color x:Key="?">Black</Color>
+                    <Color x:Key="-">Black</Color>
+                    <Color x:Key="o">Cyan</Color>
                 </ResourceDictionary>
                 <converters:StringToObjectConverter x:Key="StringToColorConverter" Items="{StaticResource StringToColorDict}"/>
             </ResourceDictionary>
@@ -203,7 +201,7 @@
         <VerticalStackLayout Padding="25, 10" Spacing="20">
             <Entry x:Name="VocabularyEntry" 
                    Placeholder="词汇" 
-                   TextColor="{Binding IsWord, Converter={StaticResource StringToColorConverter}}" 
+                   TextColor="{Binding WordStatus, Converter={StaticResource StringToColorConverter}}" 
                    Text="{Binding Vocabulary}" 
                    ReturnType="Next" 
                    toolkit:SetFocusOnEntryCompletedBehavior.NextElement="{x:Reference TranslationEntry}">

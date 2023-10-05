@@ -20,18 +20,7 @@ namespace PiKaChuWord.ViewModel
         ObservableCollection<Word> wordList = new();
 
         [ObservableProperty]
-        bool isRefreshing = false;
-
-        [ObservableProperty]
         string query = "";
-
-        [RelayCommand]
-        void Refresh()
-        {
-            Query = "";
-            Task.Run(Load);
-            IsRefreshing = false;
-        }
 
         [RelayCommand]
         void Popup(Word word)

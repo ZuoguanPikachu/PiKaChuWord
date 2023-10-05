@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json.Linq;
-using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -114,7 +113,7 @@ namespace PiKaChuWord.Utils
                 }
             }
 
-            return new (){{"is_word", isWord}, {"translation", translation}};
+            return new (){{ "word_status", isWord}, {"translation", translation}};
         }
     }
 }

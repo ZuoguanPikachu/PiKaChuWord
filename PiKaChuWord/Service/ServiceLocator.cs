@@ -13,6 +13,7 @@ namespace PiKaChuWord.Service
 
         public DataBaseService DataBaseService => _serviceProvider.GetService<DataBaseService>();
         public PopupService PopupService => _serviceProvider.GetService<PopupService>();
+        public WordQueryService WordQueryService => _serviceProvider.GetService<WordQueryService>();
 
 
         public ServiceLocator()
@@ -26,6 +27,7 @@ namespace PiKaChuWord.Service
 
             serviceCollection.AddSingleton<DataBaseService>();
             serviceCollection.AddSingleton<PopupService>();
+            serviceCollection.AddSingleton<WordQueryService>();
 
             _serviceProvider = serviceCollection.BuildServiceProvider();
         }
