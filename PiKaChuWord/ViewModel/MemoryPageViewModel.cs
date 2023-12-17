@@ -1,11 +1,13 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging.Messages;
+using CommunityToolkit.Mvvm.Messaging;
 using PiKaChuWord.Model;
 using PiKaChuWord.Service;
 
 namespace PiKaChuWord.ViewModel
 {
-    partial class MemoryPageViewModel : ObservableObject
+    partial class MemoryPageViewModel : ObservableRecipient, IRecipient<ValueChangedMessage<bool>>
     {
         private DataBaseService dataBaseService;
         private List<Word> words;
@@ -47,39 +49,36 @@ namespace PiKaChuWord.ViewModel
             switch (FilterMode)
             {
                 case "全部":
-                    EarlyDate = DateTime.ParseExact(words[words.Count - 1].Date.ToString(), "yyyyMMdd", null);
-                    LoadQuizWords(words);
+                    EarlyDate = DateTime.ParseExact(words[^1].Date.ToString(), "yyyyMMdd", null);
                     break;
                 case "近1周":
                     EarlyDate = LateDate.AddDays(-7);
-                    ChangeDate();
                     break;
                 case "近2周":
                     EarlyDate = LateDate.AddDays(-14);
-                    ChangeDate();
                     break;
                 case "近1月":
                     EarlyDate = LateDate.AddMonths(-1);
-                    ChangeDate();
                     break;
                 default:
                     break;
             }
-        }
 
+            LoadQuizWords();
+        }
 
         [RelayCommand]
         async Task Load()
         {
-            words = await dataBaseService.GetList();
             FilterMode = "全部";
+            words = await dataBaseService.GetList();
             if (words.Count == 0) return;
 
             words = words.OrderByDescending(item => item.Date).ToList();
             LateDate = DateTime.ParseExact(words[0].Date.ToString(), "yyyyMMdd", null);
-            EarlyDate = DateTime.ParseExact(words[words.Count - 1].Date.ToString(), "yyyyMMdd", null);
-            LoadQuizWords(words);
-            
+            EarlyDate = DateTime.ParseExact(words[^1].Date.ToString(), "yyyyMMdd", null);
+
+            LoadQuizWords();
         }
 
         [RelayCommand]
@@ -113,21 +112,16 @@ namespace PiKaChuWord.ViewModel
         }
 
         [RelayCommand]
-        void ChangeDate()
+        void LoadQuizWords()
         {
             if (words.Count == 0) return;
 
-            List<Word> selectedWords = words.Where(
+            quizWords = words.Where(
                 item => item.Date >= Convert.ToInt32(EarlyDate.ToString("yyyyMMdd")) && item.Date <= Convert.ToInt32(LateDate.ToString("yyyyMMdd"))
             ).ToList();
+            if (quizWords.Count == 0) return;
 
-            if (selectedWords.Count == 0) return;
-            LoadQuizWords(selectedWords);
-        }
-
-        void LoadQuizWords(List<Word> quizWords)
-        {
-            this.quizWords = ShuffleList(quizWords);
+            quizWords = ShuffleList(quizWords);
             Count = quizWords.Count;
             Index = 1;
             DisplayNewWord();
@@ -155,8 +149,18 @@ namespace PiKaChuWord.ViewModel
             AnsHidden = true;
         }
 
+        public async void Receive(ValueChangedMessage<bool> message)
+        {
+            words = await dataBaseService.GetList();
+            if (words.Count == 0) return;
+            words = words.OrderByDescending(item => item.Date).ToList();
+
+            LoadQuizWords();
+        }
+
         public MemoryPageViewModel(DataBaseService dataBaseService)
         {
+            IsActive = true;
             this.dataBaseService = dataBaseService;
             Task.Run(Load);
         }

@@ -85,7 +85,7 @@
                         Date="{Binding EarlyDate}"
                         Format="yyyy-MM-dd">
                 <DatePicker.Behaviors>
-                    <toolkit:EventToCommandBehavior EventName="DateSelected" Command="{Binding ChangeDateCommand}"/>
+                    <toolkit:EventToCommandBehavior EventName="DateSelected" Command="{Binding LoadQuizWordsCommand}"/>
                 </DatePicker.Behaviors>
             </DatePicker>
             <Label Text="—" 
@@ -98,7 +98,7 @@
                         Date="{Binding LateDate}"
                         Format="yyyy-MM-dd">
                 <DatePicker.Behaviors>
-                    <toolkit:EventToCommandBehavior EventName="DateSelected" Command="{Binding ChangeDateCommand}"/>
+                    <toolkit:EventToCommandBehavior EventName="DateSelected" Command="{Binding LoadQuizWordsCommand}"/>
                 </DatePicker.Behaviors>
             </DatePicker>
 
